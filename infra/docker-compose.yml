@@ -16,7 +16,7 @@ services:
     restart: always
   
   backend:
-    image: luckyporus/foodgram:v1
+    image: luckyporus/foodgram:v2
     restart: always
     volumes:
       - static_value:/app/static/

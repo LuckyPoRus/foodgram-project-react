@@ -133,6 +133,7 @@ DJOSER = {
     "LOGIN_FIELD": "email",
 }
 
-CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*',]
+# Для избежания ошибки 403 с токеном пропиши здесь явно адрес сервера!!!
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', 'https://*',]
 
 CORS_ALLOW_ALL_ORIGINS = True

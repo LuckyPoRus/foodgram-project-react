@@ -19,8 +19,19 @@ class Ingredient(models.Model):
     )
 
     class Meta:
+        constraints = [
+            # Ограничение добавление одинаковых ингредиентов
+            models.UniqueConstraint(
+                fields=["name", "measurement_unit"],
+                name="unique_ingredient"
+            ),
+        ]
+        ordering = ["name"]
         verbose_name = "Ингредиент"
         verbose_name_plural = "Ингредиенты"
+
+    def __str__(self):
+        return self.name
 
 
 class Tag(models.Model):
@@ -41,8 +52,12 @@ class Tag(models.Model):
     )
 
     class Meta:
+        ordering = ["name"]
         verbose_name = "Тег"
         verbose_name_plural = "Теги"
+
+    def __str__(self):
+        return self.name
 
 
 class Recipe(models.Model):
@@ -86,8 +101,12 @@ class Recipe(models.Model):
     )
 
     class Meta:
+        ordering = ["-id"]
         verbose_name = "Рецепт"
         verbose_name_plural = "Рецепты"
+
+    def __str__(self):
+        return self.name
 
 
 class RecipeTag(models.Model):
@@ -101,6 +120,13 @@ class RecipeTag(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Тег"
     )
+
+    class Meta:
+        verbose_name = "Тег рецепта"
+        verbose_name_plural = "Теги рецептов"
+
+    def __str__(self):
+        return f"{self.recipe} {self.tag}"
 
 
 class RecipeIngredient(models.Model):
@@ -123,6 +149,13 @@ class RecipeIngredient(models.Model):
             ),
         ]
     )
+
+    class Meta:
+        verbose_name = "Ингредиент в рецепте"
+        verbose_name_plural = "Ингредиенты в рецептах"
+
+    def __str__(self):
+        return f"{self.recipe} {self.ingredient} {self.amount}"
 
 
 class ShoppingCart(models.Model):
@@ -150,6 +183,9 @@ class ShoppingCart(models.Model):
         verbose_name = "Корзина покупок"
         verbose_name_plural = "Корзины покупок"
 
+    def __str__(self):
+        return f"{self.user} добавил в корзину покупок {self.recipe}"
+
 
 class Favorite(models.Model):
     user = models.ForeignKey(
@@ -175,3 +211,6 @@ class Favorite(models.Model):
         ]
         verbose_name = "Избранное"
         verbose_name_plural = "Избранные"
+
+    def __str__(self):
+        return f"{self.user} добавил в избранное {self.recipe}"
