@@ -1,4 +1,5 @@
 from django_filters.rest_framework import FilterSet, filters
+
 from recipes.models import Recipe, Tag
 
 
@@ -23,13 +24,11 @@ class RecipeFilter(FilterSet):
         model = Recipe
 
     def is_favorited_filter(self, queryset, name, value):
-        user = self.request.user
-        if value and user.is_authenticated:
-            return queryset.filter(favorite__user=user)
+        if value and self.request.user.is_authenticated:
+            return queryset.filter(favorite__user=self.request.user)
         return queryset
 
     def is_in_shopping_cart_filter(self, queryset, name, value):
-        user = self.request.user
-        if value and user.is_authenticated:
-            return queryset.filter(shopping_cart__user=user)
+        if value and self.request.user.is_authenticated:
+            return queryset.filter(shopping_cart__user=self.request.user)
         return queryset

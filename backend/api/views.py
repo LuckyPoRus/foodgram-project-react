@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from .filters import RecipeFilter
-from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
+from .permissions import IsAuthorOrAdminOrReadOnly
 from .serializers import (
     CreateRecipeSerializer,
     GetRecipesSerializer,
@@ -29,7 +29,7 @@ from recipes.models import (
 
 class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
-    permission_classes = (IsAuthorOrReadOnly, IsAdminOrReadOnly)
+    permission_classes = (IsAuthorOrAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
@@ -98,7 +98,7 @@ class RecipeViewSet(ModelViewSet):
 class IngredientViewSet(ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = (IsAuthorOrAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ("^name",)
 
@@ -106,4 +106,4 @@ class IngredientViewSet(ModelViewSet):
 class TagViewSet(ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = (IsAuthorOrAdminOrReadOnly,)
