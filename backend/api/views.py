@@ -4,7 +4,6 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -39,45 +38,33 @@ class RecipeViewSet(ModelViewSet):
             return RecipeSerializer
         return CreateRecipeSerializer
 
-    @action(
-        methods=["POST", "DELETE"],
-        detail=True
-    )
-    def favorite(self, request, id=None):
+    def create_delete(self, request, id, model):
         user = self.request.user
         recipe = get_object_or_404(Recipe, id=id)
         context = {"request": request}
 
         if self.request.method == "POST":
-            if Favorite.objects.filter(user=user, recipe=recipe).exists():
-                raise ValidationError("Рецепт находится в избранном")
-            Favorite.objects.create(user=user, recipe=recipe)
+            model.objects.get_or_create(user=user, recipe=recipe)
             serializer = GetRecipesSerializer(recipe, context=context)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if self.request.method == "DELETE":
-            get_object_or_404(Favorite, user=user, recipe=recipe).delete()
+            get_object_or_404(model, user=user, recipe=recipe).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(
+        methods=["POST", "DELETE"],
+        detail=True
+    )
+    def favorite(self, request, id=None):
+        return self.create_delete(request, id, Favorite)
 
     @action(
         methods=["POST", "DELETE"],
         detail=True
     )
     def shopping_cart(self, request, id=None):
-        user = self.request.user
-        recipe = get_object_or_404(Recipe, id=id)
-        context = {"request": request}
-
-        if self.request.method == "POST":
-            if ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
-                raise ValidationError("Рецепт находится в списке покупок")
-            ShoppingCart.objects.create(user=user, recipe=recipe)
-            serializer = GetRecipesSerializer(recipe, context=context)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        if self.request.method == "DELETE":
-            get_object_or_404(ShoppingCart, user=user, recipe=recipe).delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+        return self.create_delete(request, id, ShoppingCart)
 
     @action(
         methods=["GET"],
