@@ -26,7 +26,7 @@ class Ingredient(models.Model):
                 name="unique_ingredient"
             ),
         ]
-        ordering = ["name"]
+        ordering = ("name",)
         verbose_name = "Ингредиент"
         verbose_name_plural = "Ингредиенты"
 
@@ -52,7 +52,7 @@ class Tag(models.Model):
     )
 
     class Meta:
-        ordering = ["name"]
+        ordering = ("name",)
         verbose_name = "Тег"
         verbose_name_plural = "Теги"
 
@@ -101,7 +101,7 @@ class Recipe(models.Model):
     )
 
     class Meta:
-        ordering = ["-id"]
+        ordering = ("-id",)
         verbose_name = "Рецепт"
         verbose_name_plural = "Рецепты"
 
