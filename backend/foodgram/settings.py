@@ -135,6 +135,10 @@ DJOSER = {
 }
 
 # Для избежания ошибки 403 с токеном пропиши здесь явно адрес сервера!!!
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', 'https://*',]
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1',
+    'http://158.160.57.56',
+    'https://158.160.57.56',
+]
 
 CORS_ALLOW_ALL_ORIGINS = True
