@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueTogetherValidator
 
-from djoser.serializers import UserCreateSerializer
+from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 
 from recipes.models import (
@@ -20,7 +20,7 @@ from users.models import Subscription
 User = get_user_model()
 
 
-class CustomUserSerializer(serializers.ModelSerializer):
+class CustomUserSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -235,6 +235,13 @@ class CustomUserRegisterSerializer(UserCreateSerializer):
             "password",
         )
         model = User
+        extra_kwargs = {
+            'email': {'required': True},
+            'username': {'required': True},
+            'first_name': {'required': True},
+            'last_name': {'required': True},
+            'password': {'required': True},
+        }
 
 
 class GetRecipesSerializer(serializers.ModelSerializer):

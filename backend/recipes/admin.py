@@ -46,7 +46,6 @@ class RecipeAdmin(admin.ModelAdmin):
         "name",
         "image",
         "text",
-        "tags",
         "cooking_time",
         "favorite_count"
     )
