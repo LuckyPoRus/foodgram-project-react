@@ -27,6 +27,9 @@ class IngredientResource(resources.ModelResource):
 class IngredientAdmin(ImportExportModelAdmin):
     from_encoding = "utf-8-sig"
     resource_classes = [IngredientResource]
+    list_filter = (
+        "name",
+    )
 
 
 class TagAdmin(admin.ModelAdmin):
@@ -43,6 +46,7 @@ class RecipeAdmin(admin.ModelAdmin):
         "name",
         "image",
         "text",
+        "tags",
         "cooking_time",
         "favorite_count"
     )
