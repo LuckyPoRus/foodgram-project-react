@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -235,13 +236,6 @@ class CustomUserRegisterSerializer(UserCreateSerializer):
             "password",
         )
         model = User
-        extra_kwargs = {
-            'email': {'required': True},
-            'username': {'required': True},
-            'first_name': {'required': True},
-            'last_name': {'required': True},
-            'password': {'required': True},
-        }
 
 
 class GetRecipesSerializer(serializers.ModelSerializer):
@@ -297,3 +291,16 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj).count()
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+
+    current_password = serializers.CharField()
+    new_password = serializers.CharField()
+
+    def create(self, validated_data):
+        user = self.context.get("request").user
+        password = make_password(validated_data.get("new_password"))
+        user.password = password
+        user.save()
+        return validated_data
