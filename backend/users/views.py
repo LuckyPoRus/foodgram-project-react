@@ -27,9 +27,19 @@ class CustomUserViewSet(UserViewSet):
             return CustomUserSerializer
         return CustomUserRegisterSerializer
 
+    def retrieve(self, request, id=None):
+        author = get_object_or_404(User, id=id)
+        context = {"request": request}
+        serializer = CustomUserSerializer(
+            author,
+            context=context
+        )
+        return Response(serializer.data)
+
     @action(
         methods=["GET"],
         detail=False,
+        pagination_class=None,
         permission_classes=(IsAuthenticated,)
     )
     def me(self, request):
@@ -42,9 +52,10 @@ class CustomUserViewSet(UserViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def set_password(self, request):
+        context = {"request": request}
         serializer = ChangePasswordSerializer(
             data=request.data,
-            context={"request": request}
+            context=context
         )
         if serializer.is_valid():
             serializer.save()

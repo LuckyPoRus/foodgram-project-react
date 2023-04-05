@@ -2,13 +2,13 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, status
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from .filters import RecipeFilter
+from .filters import RecipeFilter, IngredientSearch
 from .permissions import IsAuthorOrAdminOrReadOnly
 from .serializers import (
     CreateRecipeSerializer,
@@ -101,7 +101,7 @@ class IngredientViewSet(ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
-    filter_backends = (filters.SearchFilter,)
+    filter_backends = (IngredientSearch,)
     search_fields = ("^name",)
 
 

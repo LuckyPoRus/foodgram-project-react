@@ -27,7 +27,14 @@ class IngredientResource(resources.ModelResource):
 class IngredientAdmin(ImportExportModelAdmin):
     from_encoding = "utf-8-sig"
     resource_classes = [IngredientResource]
+    list_display = (
+        "name",
+        "measurement_unit"
+    )
     list_filter = (
+        "name",
+    )
+    search_fields = (
         "name",
     )
 
@@ -38,6 +45,17 @@ class TagAdmin(admin.ModelAdmin):
         "color",
         "slug"
     )
+    search_fields = (
+        "name",
+    )
+
+
+class RecipeIngredientInLine(admin.TabularInline):
+    model = RecipeIngredient
+
+
+class RecipeTagsInLine(admin.TabularInline):
+    model = RecipeTag
 
 
 class RecipeAdmin(admin.ModelAdmin):
@@ -46,6 +64,7 @@ class RecipeAdmin(admin.ModelAdmin):
         "name",
         "image",
         "text",
+        "get_tags",
         "cooking_time",
         "favorite_count"
     )
@@ -55,6 +74,19 @@ class RecipeAdmin(admin.ModelAdmin):
         "text",
         "tags"
     )
+    search_fields = (
+        "author__email",
+        "name",
+        "tags__name"
+    )
+    inlines = (
+        RecipeIngredientInLine,
+        RecipeTagsInLine,
+    )
+
+    @admin.display(description="Теги")
+    def get_tags(self, obj):
+        return ', '.join([t.name for t in obj.tags.all()])
 
     @admin.display(description="Избранное")
     def favorite_count(self, obj):
