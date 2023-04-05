@@ -36,10 +36,13 @@ class CustomUserSerializer(UserSerializer):
         model = User
 
     def get_is_subscribed(self, obj):
-        user = self.context.get("request")
-        if not user or user.user.is_anonymous:
+        request = self.context.get("request")
+        if not request or request.user.is_anonymous:
             return False
-        return Subscription.objects.filter(user=user, author=obj).exists()
+        return Subscription.objects.filter(
+            user=request.user,
+            author=obj
+        ).exists()
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -87,9 +90,9 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    tags = TagSerializer(many=True)
-    author = CustomUserSerializer()
-    ingredients = serializers.SerializerMethodField()
+    tags = TagSerializer(many=True, read_only=True)
+    author = CustomUserSerializer(read_only=True)
+    ingredients = serializers.SerializerMethodField(read_only=True)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
@@ -221,7 +224,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         request = self.context.get("request")
         context = {"request": request}
-        return RecipeSerializer(instance, context=context).data()
+        return RecipeSerializer(instance, context=context).data
 
 
 class CustomUserRegisterSerializer(UserCreateSerializer):
@@ -252,6 +255,21 @@ class GetRecipesSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
+    email = serializers.ReadOnlyField(
+        source='author.email'
+    )
+    id = serializers.ReadOnlyField(
+        source='author.id'
+    )
+    username = serializers.ReadOnlyField(
+        source='author.username',
+    )
+    first_name = serializers.ReadOnlyField(
+        source='author.first_name'
+    )
+    last_name = serializers.ReadOnlyField(
+        source='author.last_name'
+    )
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
@@ -275,22 +293,25 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         return obj
 
     def get_is_subscribed(self, obj):
-        user = self.context.get("request").user
-        if user.is_anonymous:
+        request = self.context.get("request")
+        if not request or request.user.is_anonymous:
             return False
-        return Subscription.objects.filter(user=user, author=obj).exists()
+        return Subscription.objects.filter(
+            user=obj.user,
+            author=obj.author
+        ).exists()
 
     def get_recipes(self, obj):
         request = self.context.get("request")
         recipes_limit = request.GET.get("recipes_limit")
-        recipes = Recipe.objects.filter(author=obj)
+        recipes = Recipe.objects.filter(author=obj.author)
         if recipes_limit is not None:
             recipes = recipes[:int(recipes_limit)]
         serializer = GetRecipesSerializer(recipes, many=True)
         return serializer.data
 
     def get_recipes_count(self, obj):
-        return Recipe.objects.filter(author=obj).count()
+        return Recipe.objects.filter(author=obj.author).count()
 
 
 class ChangePasswordSerializer(serializers.Serializer):

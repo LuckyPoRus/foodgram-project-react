@@ -40,9 +40,9 @@ class RecipeViewSet(ModelViewSet):
             return RecipeSerializer
         return CreateRecipeSerializer
 
-    def create_delete(self, request, id, model):
+    def create_delete(self, request, pk, model):
         user = self.request.user
-        recipe = get_object_or_404(Recipe, id=id)
+        recipe = get_object_or_404(Recipe, id=pk)
         context = {"request": request}
 
         if self.request.method == "POST":
@@ -58,15 +58,15 @@ class RecipeViewSet(ModelViewSet):
         methods=["POST", "DELETE"],
         detail=True
     )
-    def favorite(self, request, id=None):
-        return self.create_delete(request, id, Favorite)
+    def favorite(self, request, pk=None):
+        return self.create_delete(request, pk, Favorite)
 
     @action(
         methods=["POST", "DELETE"],
         detail=True
     )
-    def shopping_cart(self, request, id=None):
-        return self.create_delete(request, id, ShoppingCart)
+    def shopping_cart(self, request, pk=None):
+        return self.create_delete(request, pk, ShoppingCart)
 
     @action(
         methods=["GET"],

@@ -54,17 +54,18 @@ class CustomUserViewSet(UserViewSet):
     @action(
         methods=["POST", "DELETE"],
         detail=True,
-        permission_classes=[IsAuthenticated]
+        permission_classes=(IsAuthenticated,)
     )
     def subscribe(self, request, id=None):
-        user = self.request.user
+        user = request.user
         author = get_object_or_404(User, id=id)
+        context = {"request": request}
 
         if request.method == "POST":
             if Subscription.objects.filter(user=user, author=author).exists():
                 raise ValueError("Уже подписан")
-            Subscription.objects.create(user=user, author=author)
-            serializer = SubscriptionSerializer(author)
+            sub = Subscription.objects.create(user=user, author=author)
+            serializer = SubscriptionSerializer(sub, context=context)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if request.method == "DELETE":
@@ -81,9 +82,10 @@ class CustomUserViewSet(UserViewSet):
         detail=False,
         permission_classes=(IsAuthenticated,)
     )
-    def get_subscriptions(self, request):
+    def subscriptions(self, request):
         user = request.user
-        queryset = User.objects.filter(user=user)
+        context = {"request": request}
+        queryset = Subscription.objects.filter(user=user)
         pages = self.paginate_queryset(queryset)
-        serializer = SubscriptionSerializer(pages, many=True)
+        serializer = SubscriptionSerializer(pages, many=True, context=context)
         return self.get_paginated_response(serializer.data)
