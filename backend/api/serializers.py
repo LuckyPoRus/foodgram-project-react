@@ -17,7 +17,7 @@ from recipes.models import (
     Tag
 )
 from users.models import Subscription
-from foodgram.settings import MIN_VALUE
+from foodgram.settings import MIN_VALUE, MAX_VALUE
 
 User = get_user_model()
 
@@ -135,6 +135,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 class CreateRecipeIngredientSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
     amount = serializers.IntegerField(
+        max_value=MAX_VALUE,
         min_value=MIN_VALUE
     )
 
@@ -155,6 +156,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     ingredients = CreateRecipeIngredientSerializer(many=True)
     image = Base64ImageField()
     cooking_time = serializers.IntegerField(
+        max_value=MAX_VALUE,
         min_value=MIN_VALUE
     )
 
