@@ -1,9 +1,9 @@
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 from users.models import CustomUser
+from foodgram.settings import MIN_VALUE, MAX_VALUE
 
-MIN_VALUE = 1
 MAX_LENGTH = 200
 MAX_HEX_COLOR_LENGTH = 7
 
@@ -97,6 +97,10 @@ class Recipe(models.Model):
                 MIN_VALUE,
                 message="Убедитесь, что это значение больше либо равно 1."
             ),
+            MaxValueValidator(
+                MAX_VALUE,
+                message="Убедитесь, что это значение меньше либо равно 32767."
+            ),
         ]
     )
 
@@ -146,6 +150,10 @@ class RecipeIngredient(models.Model):
             MinValueValidator(
                 MIN_VALUE,
                 message="Убедитесь, что это значение больше либо равно 1."
+            ),
+            MaxValueValidator(
+                MAX_VALUE,
+                message="Убедитесь, что это значение меньше либо равно 32767."
             ),
         ]
     )

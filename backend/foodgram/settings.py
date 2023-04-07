@@ -9,6 +9,8 @@ if os.path.exists(dotenv_path):
 MAX_EMAIL_LENGTH = 254
 MAX_USER_NAME_LENGTH = 150
 MAX_PASSWORD_LENGTH = 150
+MIN_VALUE = 1
+MAX_VALUE = 32767
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
