@@ -94,6 +94,6 @@ sudo docker-compose exec backend python manage.py loaddata foodgram_new.json
 ```
 
 **Автор backend составляющей:**<br/>
-**Павел** - https://github.com/LuckyPoRus
-**Ссылка на проект:** <http://158.160.57.56/>
-![example workflow](https://github.com/LuckyPoRus/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)<br>
+**Павел** - https://github.com/LuckyPoRus<br/>
+**Ссылка на проект:** <http://158.160.57.56/><br/>
+![example workflow](https://github.com/LuckyPoRus/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
